@@ -18,12 +18,10 @@ config :brokk,
   adapters: [
     Brokk.Adapter.Flowdock
   ],
-  # Required by the flowdock connection adapter
+
   flowdock: [
-    org: System.get_env("FLOWDOCK_ORG"),
-    flows: System.get_env("FLOWDOCK_FLOWS"),
-    login: System.get_env("FLOWDOCK_LOGIN"),
-    pass: System.get_env("FLOWDOCK_PASSWORD")
+    apikey: System.get_env("FLOWDOCK_API_KEY"),
+    flows: System.get_env("FLOWDOCK_FLOWS")
   ]
 
 # It is also possible to import configuration files, relative to this
