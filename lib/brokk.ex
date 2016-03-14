@@ -17,10 +17,14 @@ defmodule Brokk do
       Brokk.Worker.child_spec
     ]
 
+    adapters =
+      Application.get_env(:brokk, :adapters, [])
+      |> Enum.map(fn adapter -> adapter.child_spec end)
+
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Brokk.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(children ++ adapters, opts)
   end
 
   @doc ~S"""

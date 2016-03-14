@@ -14,6 +14,16 @@ config :brokk,
     Brokk.Plugins.Adult,
     Brokk.Plugins.Fortune,
     Brokk.Plugins.GeocodeMe
+  ],
+  adapters: [
+    Brokk.Adapter.Flowdock
+  ],
+  # Required by the flowdock connection adapter
+  flowdock: [
+    org: System.get_env("FLOWDOCK_ORG"),
+    flows: System.get_env("FLOWDOCK_FLOWS"),
+    login: System.get_env("FLOWDOCK_LOGIN"),
+    pass: System.get_env("FLOWDOCK_PASSWORD")
   ]
 
 # It is also possible to import configuration files, relative to this
