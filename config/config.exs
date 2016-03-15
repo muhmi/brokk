@@ -11,9 +11,12 @@ config :logger, :console,
 config :brokk,
   plugins: [
     Brokk.Plugins.Echo,
-    Brokk.Plugins.Adult,
     Brokk.Plugins.Fortune,
-    Brokk.Plugins.GeocodeMe
+    Brokk.Plugins.GeocodeMe,
+
+    # Stupid plugins processed last
+    Brokk.Plugins.Adult,
+    Brokk.Plugins.Alot,
   ],
   adapters: [
     Brokk.Adapter.Flowdock
