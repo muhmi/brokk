@@ -64,11 +64,11 @@ defmodule Brokk.Worker do
   end
   def call_plugins(_, []), do: :ignored
 
-  def send_reply(receiver, reply_msg) when is_pid(receiver) do
-    send receiver, reply_msg
+  def send_reply(receiver, reply_msg) when is_pid(receiver) and is_binary(reply_msg) do
+    send receiver, {:text, reply_msg}
   end
-  def send_reply(receiver, _) do
-    Logger.debug "Dont know how to reply to #{inspect receiver}, ignoring."
+  def send_reply(receiver, reply) do
+    Logger.warn "Dont know how to reply #{inspect reply} to #{inspect receiver}, ignoring."
   end
 
 end

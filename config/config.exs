@@ -20,7 +20,9 @@ config :brokk,
   ],
 
   flowdock: [
+    # api key for accessing Streams and Messages APIs
     apikey: System.get_env("FLOWDOCK_API_KEY"),
+    # Expected to be a comma separated list of flows like "org/flow,org/flow"
     flows: System.get_env("FLOWDOCK_FLOWS")
   ]
 
