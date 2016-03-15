@@ -13,6 +13,7 @@ config :brokk,
     Brokk.Plugins.Echo,
     Brokk.Plugins.Fortune,
     Brokk.Plugins.GeocodeMe,
+    Brokk.Plugins.Base64,
 
     # Stupid plugins processed last
     Brokk.Plugins.Adult,
