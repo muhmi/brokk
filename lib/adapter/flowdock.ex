@@ -76,17 +76,18 @@ defmodule Brokk.Adapter.Flowdock do
 
   def handle_info(%HTTPoison.AsyncChunk{chunk: json, id: _id}, state) when is_binary(json) do
     msg = Poison.decode! json
-    if msg["event"] == "message" do
-      # use '.' instead of '/' inside flowdock
-      case msg["content"] do
-        "." <> command -> Brokk.receive(self, "/#{command}")
-        message -> Brokk.receive(self, message)
-      end
+    case msg  do
+      %{"event" => "message", "content" => content} ->
+        filter(content)
+      %{"event" => "message-edit", "content" => %{"updated_content" => content}} ->
+        filter(content)
+      _any ->
+        Logger.debug "unknown message received #{json}"
     end
     {:noreply, state}
   end
 
-    def handle_info(%HTTPoison.Error{reason: {:closed, :timeout}}, state) do
+  def handle_info(%HTTPoison.Error{reason: {:closed, :timeout}}, state) do
     Logger.debug "connection closed, timeout"
     {:stop, :normal, state}
   end
@@ -97,4 +98,11 @@ defmodule Brokk.Adapter.Flowdock do
     {:noreply, state}
   end
 
+  @doc "Convert `.command`s to `/command`"
+  def filter(content) when is_binary(content) do
+    case String.strip(content) do
+      "." <> command -> Brokk.receive(self, "/#{command}")
+      message -> Brokk.receive(self, message)
+    end
+  end
 end
