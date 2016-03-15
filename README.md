@@ -1,5 +1,7 @@
 # Brokk
 
+** DO NOT USE THIS! I AM STILL SKETCHING THINGS OUT **
+
 **TODO: Add description**
 
 
@@ -32,19 +34,4 @@ other
 
 	- easy aws / heroku setup
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
-
-  1. Add brokk to your list of dependencies in `mix.exs`:
-
-        def deps do
-          [{:brokk, "~> 0.0.1"}]
-        end
-
-  2. Ensure brokk is started before your application:
-
-        def application do
-          [applications: [:brokk]]
-        end
 
