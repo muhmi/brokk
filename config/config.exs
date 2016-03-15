@@ -11,9 +11,22 @@ config :logger, :console,
 config :brokk,
   plugins: [
     Brokk.Plugins.Echo,
-    Brokk.Plugins.Adult,
     Brokk.Plugins.Fortune,
-    Brokk.Plugins.GeocodeMe
+    Brokk.Plugins.GeocodeMe,
+
+    # Stupid plugins processed last
+    Brokk.Plugins.Adult,
+    Brokk.Plugins.Alot,
+  ],
+  adapters: [
+    Brokk.Adapter.Flowdock
+  ],
+
+  flowdock: [
+    # api key for accessing Streams and Messages APIs
+    apikey: System.get_env("FLOWDOCK_API_KEY"),
+    # Expected to be a comma separated list of flows like "org/flow,org/flow"
+    flows: System.get_env("FLOWDOCK_FLOWS")
   ]
 
 # It is also possible to import configuration files, relative to this
