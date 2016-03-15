@@ -26,7 +26,7 @@ defmodule Brokk.Worker do
   end
 
   def init(_opts) do
-    state = %{plugins: Application.get_env(:brokk, :plugins, [])}
+    state = %{plugins: Application.get_env(:brokk, :plugins, []), last_sent: ""}
     for plug <- state.plugins, do: plug.init(state)
     {:ok, state}
   end
@@ -38,7 +38,15 @@ defmodule Brokk.Worker do
 
   def handle_cast({:msg, sender, {:text, text} = _} = msg, state) when is_sender(sender) do
     Logger.debug "Received message #{text} from #{inspect sender}"
-    call_plugins(msg, state.plugins)
+    unless state.last_sent == text do
+      call_plugins(msg, state.plugins)
+    end
+    {:noreply, state}
+  end
+
+  def handle_cast({:send, receiver, out_msg}, state) do
+    send receiver, {:text, out_msg}
+    state = Map.put(state, :last_sent, out_msg)
     {:noreply, state}
   end
 
@@ -65,7 +73,7 @@ defmodule Brokk.Worker do
   def call_plugins(_, []), do: :ignored
 
   def send_reply(receiver, reply_msg) when is_pid(receiver) and is_binary(reply_msg) do
-    send receiver, {:text, reply_msg}
+    GenServer.cast __MODULE__, {:send, receiver, reply_msg}
   end
   def send_reply(receiver, reply) do
     Logger.warn "Dont know how to reply #{inspect reply} to #{inspect receiver}, ignoring."
