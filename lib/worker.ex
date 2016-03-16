@@ -37,8 +37,8 @@ defmodule Brokk.Worker do
   end
 
   def handle_cast({:msg, sender, {:text, text} = _} = msg, state) when is_sender(sender) do
-    Logger.debug "Received message #{text} from #{inspect sender}"
     unless state.last_sent == text do
+      Logger.debug "Received message #{text} from #{inspect sender}"
       call_plugins(msg, state.plugins)
     end
     {:noreply, state}
@@ -46,7 +46,7 @@ defmodule Brokk.Worker do
 
   def handle_cast({:send, receiver, out_msg}, state) do
     send receiver, {:text, out_msg}
-    state = Map.put(state, :last_sent, out_msg)
+    state = Map.put(state, :last_sent, String.strip(out_msg))
     {:noreply, state}
   end
 
