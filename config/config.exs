@@ -14,6 +14,7 @@ config :brokk,
     Brokk.Plugins.Fortune,
     Brokk.Plugins.GeocodeMe,
     Brokk.Plugins.Base64,
+    Brokk.Plugins.Jenkins,
 
     # Stupid plugins processed last
     Brokk.Plugins.Adult,
@@ -28,6 +29,11 @@ config :brokk,
     apikey: System.get_env("FLOWDOCK_API_KEY"),
     # Expected to be a comma separated list of flows like "org/flow,org/flow"
     flows: System.get_env("FLOWDOCK_FLOWS")
+  ],
+
+  jenkins: [
+    auth: System.get_env("JENKINS_AUTH"),
+    url: System.get_env("JENKINS_URL")
   ]
 
 # It is also possible to import configuration files, relative to this
