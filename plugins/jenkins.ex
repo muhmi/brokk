@@ -20,8 +20,17 @@ defmodule Brokk.Plugins.Jenkins do
     describe_job(from, id)
     :halt
   end
+  def on_message(from, {:text, "/j build " <> id}) do
+    start_build(from, id)
+    :halt
+  end
+  def on_message(from, {:text, "/jenkins build " <> id}) do
+    start_build(from, id)
+    :halt
+  end
   def on_message(_from, _any), do: :noreply
 
+  @doc "Ask Jenkins for a jobs description and status"
   def describe_job(caller, id) when is_binary(id) do
     spawn fn ->
       case find_job(id) do
@@ -30,6 +39,23 @@ defmodule Brokk.Plugins.Jenkins do
           Brokk.reply caller, to_job_description(response)
         _ ->
           Brokk.reply caller, "Hmm, I cant find a job with id/name like #{inspect id}"
+      end
+    end
+  end
+
+  @doc "Start a build"
+  def start_build(caller, job_id) when is_binary(job_id) do
+    spawn fn ->
+      case find_job(job_id) do
+        {:ok, job} ->
+          {status, resp} = api_build_job! job["name"]
+          if status >= 200 and status <= 400 do
+            Brokk.reply caller, "#{status} Build started for job #{job["name"]}"
+          else
+            Brokk.reply caller, "Cannot start build, Jenkins says: (#{status}) #{resp}"
+          end
+        _ ->
+          Brokk.reply caller, "Hmm, I cant find a job with id/name like #{inspect job_id}"
       end
     end
   end
@@ -99,6 +125,11 @@ defmodule Brokk.Plugins.Jenkins do
 
   def api_last_build!(name, number) do
     api_request! "/job/#{name}/#{number}/api/json"
+  end
+
+  def api_build_job!(name) do
+    %HTTPoison.Response{body: body, status_code: status} = HTTPoison.post!("#{jenkins_url}/job/#{name}/build", [], [], [hackney: [basic_auth: auth]])
+    {status, body}
   end
 
   def api_request!(path) when is_binary(path) do
