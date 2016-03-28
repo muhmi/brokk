@@ -1,4 +1,3 @@
-# https://github.com/github/hubot-scripts/blob/master/src/scripts/adult.coffee
 defmodule Brokk.Plugins.Base64 do
 
   use Brokk.Plugin
